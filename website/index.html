@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Princess B. Lodor — Interactive Portfolio & Credentials</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        vanilla: '#F3E5AB',
+                        flamingo: '#FC8EAC',
+                        brandy: '#402B21',
+                        darkbg: '#1A120B',
+                        darkcard: 'rgba(40, 28, 20, 0.75)',
+                    },
+                    fontFamily: {
+                        heading: ['Playfair Display', 'serif'],
+                        body: ['Lora', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f3e5ab 0%, #f7ebd0 50%, #f3e5ab 100%);
+            color: #402B21;
+            font-family: 'Lora', serif;
+            overflow-x: hidden;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        .dark body {
+            background: linear-gradient(135deg, #120c08 0%, #1a120b 50%, #241710 100%);
+            color: #f3e5ab;
+        }
+        
+        /* Custom Glowing Cursor Follower */
+        #cursor-ball {
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            z-index: 9999;
+            transition: transform 0.15s ease-out;
+            mix-blend-mode: multiply;
+        }
+        .dark #cursor-ball {
+            mix-blend-mode: screen;
+            background-color: rgba(252, 142, 172, 0.4);
+        }
+
+        /* Floating background flower animations */
+        .flower-bg {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0.12;
+            z-index: 0;
+            animation: float 14s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            50% { transform: translateY(-35px) rotate(20deg) scale(1.08); }
+        }
+
+        /* Profile Bounce & Glow Animation */
+        .profile-animated {
+            animation: gentleBounce 4s ease-in-out infinite, pulseGlow 3s ease-in-out infinite alternate;
+        }
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 15px rgba(252, 142, 172, 0.4), 0 0 30px rgba(252, 142, 172, 0.2);
+            }
+            100% {
+                box-shadow: 0 0 30px rgba(252, 142, 172, 0.8), 0 0 60px rgba(252, 142, 172, 0.5);
+            }
+        }
+
+        /* Scroll Reveal Effect */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Card Hover Effects */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(64, 43, 33, 0.12);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dark .glass-card {
+            background: rgba(40, 28, 20, 0.6);
+            border-color: rgba(252, 142, 172, 0.2);
+        }
+        .glass-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 30px -10px rgba(252, 142, 172, 0.35);
+            border-color: rgba(252, 142, 172, 0.6);
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .dark .glass-card:hover {
+            background: rgba(55, 38, 28, 0.85);
+        }
+
+        /* Slideshow Animation */
+        .slide {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+            transform: scale(1.05);
+            pointer-events: none;
+        }
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        /* Shimmer Effect */
+        .btn-shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shimmer::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(60deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: rotate(30deg);
+            transition: transform 0.8s;
+        }
+        .btn-shimmer:hover::after {
+            transform: translate(100%, 100%) rotate(30deg);
+        }
+    </style>
+</head>
+<body class="relative min-h-screen selection:bg-flamingo selection:text-brandy dark:text-vanilla">
+
+    <!-- Custom Animated Cursor Ball -->
+    <div id="cursor-ball" class="w-8 h-8 bg-flamingo/50 blur-sm"></div>
+
+    <!-- Background Decorative SVGs -->
+    <svg class="flower-bg w-96 h-96 top-5 -left-10 text-flamingo" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2C10.5 4 8 4.5 6 3c-1.5 2-1 4.5.5 6-2 1.5-2.5 4-1 6 2 1.5 4.5 1 6-.5 1.5 2 4 2.5 6 1 1.5-2 1-4.5-.5-6 2-1.5 2.5-4 1-6-2-1.5-4.5-1-6 .5-1.5-2-4-2.5-6-1z"/>
+    </svg>
+    <svg class="flower-bg w-[32rem] h-[32rem] bottom-10 -right-20 text-flamingo" style="animation-delay: 4s;" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2C10.5 4 8 4.5 6 3c-1.5 2-1 4.5.5 6-2 1.5-2.5 4-1 6 2 1.5 4.5 1 6-.5 1.5 2 4 2.5 6 1 1.5-2 1-4.5-.5-6 2-1.5 2.5-4 1-6-2-1.5-4.5-1-6 .5-1.5-2-4-2.5-6-1z"/>
+    </svg>
+
+    <!-- Navigation Header with Seminar Sub-links -->
+    <header id="navbar" class="sticky top-0 z-40 bg-vanilla/80 dark:bg-darkbg/80 backdrop-blur-md border-b border-brandy/10 dark:border-vanilla/10 py-4 px-8 transition-all duration-300">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="#home" class="text-2xl font-bold tracking-wider text-brandy dark:text-vanilla font-heading hover:text-flamingo transition duration-300">
+                SEMINAR AND TOURS ST1
+            </a>
+            <nav class="flex flex-wrap items-center gap-4 md:gap-6 text-xs md:text-sm font-semibold tracking-widest uppercase">
+                <a href="#home" class="hover:text-flamingo transition py-1">Home</a>
+                <a href="#skills" class="hover:text-flamingo transition py-1">Skills</a>
+                <a href="#badges" class="hover:text-flamingo transition py-1">Badges</a>
+                <a href="#certificates" class="hover:text-flamingo transition py-1">Certificates</a>
+                
+                <!-- Seminars Nav Link with Dropdown Sub-menu -->
+                <div class="relative group">
+                    <a href="#seminars" class="hover:text-flamingo transition py-1 flex items-center gap-1">
+                        Seminars <span class="text-[10px]">▼</span>
+                    </a>
+                    <div class="absolute left-0 top-full hidden group-hover:flex flex-col bg-vanilla dark:bg-darkbg border border-brandy/20 dark:border-vanilla/20 rounded-2xl p-2 shadow-xl min-w-[140px] z-50">
+                        <a href="#seminar1" class="px-3 py-2 text-[11px] hover:bg-flamingo/30 rounded-xl transition">Seminar 1</a>
+                        <a href="#seminar2" class="px-3 py-2 text-[11px] hover:bg-flamingo/30 rounded-xl transition">Seminar 2</a>
+                        <a href="#seminar3" class="px-3 py-2 text-[11px] hover:bg-flamingo/30 rounded-xl transition">Seminar 3</a>
+                        <a href="#seminar4" class="px-3 py-2 text-[11px] hover:bg-flamingo/30 rounded-xl transition">Seminar 4</a>
+                    </div>
+                </div>
+                
+                <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-brandy/10 dark:bg-vanilla/10 hover:bg-flamingo transition text-base ml-2">
+                    🌙 / ☀️
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="relative z-10 max-w-6xl mx-auto px-6 py-12 space-y-28">
+
+        <!-- Personalized Hero Section -->
+        <section id="home" class="min-h-[75vh] flex flex-col justify-center items-center text-center space-y-8 pt-4 reveal active">
+            <div class="inline-block px-5 py-2 bg-white/60 dark:bg-brandy/60 border border-flamingo/40 rounded-full text-xs font-bold uppercase tracking-widest text-brandy dark:text-vanilla shadow-sm animate-pulse">
+                ✨ Academic & Professional Credentials Portfolio
+            </div>
+
+            <div class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 max-w-5xl mx-auto text-center lg:text-left">
+                <!-- Glowing Bouncing Profile Image -->
+                <div class="relative flex-shrink-0">
+                    <div class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full p-2 bg-gradient-to-tr from-flamingo via-vanilla to-brandy dark:from-flamingo dark:to-vanilla profile-animated overflow-hidden">
+                        <img src="profile.png" alt="Princess B. Lodor" class="w-full h-full object-cover rounded-full bg-vanilla dark:bg-brandy">
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-brandy dark:text-vanilla leading-tight tracking-tight font-heading">
+                        Princess B. Lodor
+                    </h1>
+
+                    <p class="text-lg md:text-xl text-brandy/80 dark:text-vanilla/80 max-w-2xl font-body italic font-light leading-relaxed">
+                        Information Technology Student dedicated to continuous technical growth across Cloud Computing, Cybersecurity, Data Analytics, and Modern Artificial Intelligence.
+                    </p>
+
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
+                        <a href="#badges" class="btn-shimmer px-7 py-3 bg-brandy text-vanilla dark:bg-flamingo dark:text-brandy font-semibold text-sm rounded-2xl shadow-lg hover:bg-flamingo hover:text-brandy hover:shadow-flamingo/40 hover:-translate-y-1 transition duration-300">
+                            Explore Badges & Credentials &rarr;
+                        </a>
+                        <a href="#seminars" class="px-7 py-3 border-2 border-brandy dark:border-vanilla text-brandy dark:text-vanilla font-semibold text-sm rounded-2xl hover:bg-brandy hover:text-vanilla dark:hover:bg-vanilla dark:hover:text-brandy hover:-translate-y-1 transition duration-300">
+                            View Seminar Highlights
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Counter -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-4xl pt-8">
+                <div class="glass-card p-6 rounded-3xl text-center">
+                    <span class="block text-4xl md:text-5xl font-black font-heading">18</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-flamingo mt-2 block">Digital Badges</span>
+                </div>
+                <div class="glass-card p-6 rounded-3xl text-center">
+                    <span class="block text-4xl md:text-5xl font-black font-heading">17</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-flamingo mt-2 block">Cisco Certificates</span>
+                </div>
+                <div class="glass-card p-6 rounded-3xl text-center">
+                    <span class="block text-4xl md:text-5xl font-black font-heading">4</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-flamingo mt-2 block">Attended Seminars</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Skills -->
+        <section id="skills" class="space-y-6 scroll-mt-24 reveal">
+            <div class="flex justify-between items-end border-b-2 border-brandy/20 dark:border-vanilla/20 pb-3">
+                <h2 class="text-3xl font-bold font-heading">Technical Proficiency</h2>
+                <span class="text-xs font-bold text-flamingo uppercase tracking-widest">Skill Competency</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 glass-card p-8 rounded-3xl">
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm font-semibold">
+                        <span>Cybersecurity & Threat Management</span>
+                        <span>88%</span>
+                    </div>
+                    <div class="w-full h-3 bg-brandy/10 dark:bg-vanilla/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-flamingo rounded-full" style="width: 88%;"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm font-semibold">
+                        <span>Data Analytics & Data Science</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="w-full h-3 bg-brandy/10 dark:bg-vanilla/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-flamingo rounded-full" style="width: 85%;"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm font-semibold">
+                        <span>AI & Prompt Engineering</span>
+                        <span>92%</span>
+                    </div>
+                    <div class="w-full h-3 bg-brandy/10 dark:bg-vanilla/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-flamingo rounded-full" style="width: 92%;"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm font-semibold">
+                        <span>Networking & Hardware Basics</span>
+                        <span>80%</span>
+                    </div>
+                    <div class="w-full h-3 bg-brandy/10 dark:bg-vanilla/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-flamingo rounded-full" style="width: 80%;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: 18 Digital Badges -->
+        <section id="badges" class="space-y-6 scroll-mt-24 reveal">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end border-b-2 border-brandy/20 dark:border-vanilla/20 pb-3 gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold font-heading">Digital Badges (18 Total)</h2>
+                    <span class="text-xs font-bold text-flamingo uppercase tracking-widest">Verified Credentials</span>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 text-xs font-semibold">
+                    <button onclick="filterBadges('all')" class="px-3 py-1.5 rounded-lg bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy hover:bg-flamingo transition">All</button>
+                    <button onclick="filterBadges('ai')" class="px-3 py-1.5 rounded-lg bg-brandy/10 dark:bg-vanilla/10 hover:bg-flamingo transition">AI & Data</button>
+                    <button onclick="filterBadges('cyber')" class="px-3 py-1.5 rounded-lg bg-brandy/10 dark:bg-vanilla/10 hover:bg-flamingo transition">Cybersecurity</button>
+                    <button onclick="filterBadges('dev')" class="px-3 py-1.5 rounded-lg bg-brandy/10 dark:bg-vanilla/10 hover:bg-flamingo transition">Dev & Support</button>
+                </div>
+            </div>
+            
+            <div id="badge-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="dev">
+                    <img src="computer-hardware-basics.png" alt="Computer Hardware Basics" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('computer-hardware-basics.png', 'Computer Hardware Basics')">
+                    <h3 class="font-bold text-xs">Computer Hardware Basics</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="cyber">
+                    <img src="cyber-threat-management (1).png" alt="Cyber Threat Management" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('cyber-threat-management (1).png', 'Cyber Threat Management')">
+                    <h3 class="font-bold text-xs">Cyber Threat Management</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="ai">
+                    <img src="data-analytics-essentials.png" alt="Data Analytics Essentials" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('data-analytics-essentials.png', 'Data Analytics Essentials')">
+                    <h3 class="font-bold text-xs">Data Analytics Essentials</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="dev">
+                    <img src="digital-awareness.png" alt="Digital Awareness" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('digital-awareness.png', 'Digital Awareness')">
+                    <h3 class="font-bold text-xs">Digital Awareness</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="cyber">
+                    <img src="digital-safety-and-security-awareness.png" alt="Digital Safety & Security" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('digital-safety-and-security-awareness.png', 'Digital Safety & Security')">
+                    <h3 class="font-bold text-xs">Digital Safety & Security</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="cyber">
+                    <img src="ethical-hacker.png" alt="Ethical Hacker" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('ethical-hacker.png', 'Ethical Hacker')">
+                    <h3 class="font-bold text-xs">Ethical Hacker</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="ai">
+                    <img src="find-insights-with-ai.png" alt="Find Insights with AI" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('find-insights-with-ai.png', 'Find Insights with AI')">
+                    <h3 class="font-bold text-xs">Find Insights with AI</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="dev">
+                    <img src="html-essentials.png" alt="HTML Essentials" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('html-essentials.png', 'HTML Essentials')">
+                    <h3 class="font-bold text-xs">HTML Essentials</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="cyber">
+                    <img src="introduction-to-cybersecurity (1).png" alt="Intro to Cybersecurity" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('introduction-to-cybersecurity (1).png', 'Intro to Cybersecurity')">
+                    <h3 class="font-bold text-xs">Intro to Cybersecurity</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="ai">
+                    <img src="introduction-to-data-science (1).png" alt="Intro to Data Science" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('introduction-to-data-science (1).png', 'Intro to Data Science')">
+                    <h3 class="font-bold text-xs">Intro to Data Science</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="dev">
+                    <img src="introduction-to-iot.png" alt="Intro to IoT" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('introduction-to-iot.png', 'Intro to IoT')">
+                    <h3 class="font-bold text-xs">Intro to IoT</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="ai">
+                    <img src="introduction-to-modern-ai (1).png" alt="Intro to Modern AI" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('introduction-to-modern-ai (1).png', 'Intro to Modern AI')">
+                    <h3 class="font-bold text-xs">Intro to Modern AI</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="dev">
+                    <img src="it-customer-support-basics.png" alt="IT Customer Support Basics" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('it-customer-support-basics.png', 'IT Customer Support Basics')">
+                    <h3 class="font-bold text-xs">IT Support Basics</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="dev">
+                    <img src="networking-basics (1).png" alt="Networking Basics" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('networking-basics (1).png', 'Networking Basics')">
+                    <h3 class="font-bold text-xs">Networking Basics</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="cyber">
+                    <img src="network-support-and-security (1).png" alt="Network Support & Security" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('network-support-and-security (1).png', 'Network Support & Security')">
+                    <h3 class="font-bold text-xs">Network Security</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="ai">
+                    <img src="prompt-like-an-engineer.png" alt="Prompt Like an Engineer" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('prompt-like-an-engineer.png', 'Prompt Like an Engineer')">
+                    <h3 class="font-bold text-xs">Prompt Engineering</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="dev">
+                    <img src="python-essentials-1.1 (1).png" alt="Python Essentials 1.1" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('python-essentials-1.1 (1).png', 'Python Essentials 1.1')">
+                    <h3 class="font-bold text-xs">Python Essentials 1.1</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+
+                <div class="badge-card glass-card p-4 rounded-2xl text-center flex flex-col justify-between items-center" data-category="dev">
+                    <img src="UpskillTech-Badge-UTP-CDB-101-2026.png" alt="UpskillTech DB 101" class="w-20 h-20 object-contain mb-2 hover:scale-110 transition cursor-pointer" onclick="openModal('UpskillTech-Badge-UTP-CDB-101-2026.png', 'UpskillTech DB 101')">
+                    <h3 class="font-bold text-xs">UpskillTech DB 101</h3>
+                    <a href="https://www.credly.com" target="_blank" class="mt-3 w-full bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-[10px] py-1.5 rounded-lg font-semibold hover:bg-flamingo hover:text-brandy transition">Credly Link</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Complete 17 Certificates -->
+        <section id="certificates" class="space-y-6 scroll-mt-24 reveal">
+            <div class="flex justify-between items-end border-b-2 border-brandy/20 dark:border-vanilla/20 pb-3">
+                <h2 class="text-3xl font-bold font-heading">Cisco Certificates (17 Total)</h2>
+                <span class="text-xs font-bold text-flamingo uppercase tracking-widest">Interactive Previews</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Cert 1 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('ComputerHardwareBasics.png', 'Computer Hardware Basics Certificate')">
+                        <img src="ComputerHardwareBasics.png" alt="Computer Hardware Basics" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Computer Hardware Basics</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('ComputerHardwareBasics.png', 'Computer Hardware Basics Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="ComputerHardwareBasics.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 2 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('CyberThreatManagement.png', 'Cyber Threat Management Certificate')">
+                        <img src="CyberThreatManagement.png" alt="Cyber Threat Management" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Cyber Threat Management</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('CyberThreatManagement.png', 'Cyber Threat Management Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="CyberThreatManagement.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 3 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('DataAnalyticsEssentials.png', 'Data Analytics Essentials Certificate')">
+                        <img src="DataAnalyticsEssentials.png" alt="Data Analytics Essentials" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Data Analytics Essentials</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('DataAnalyticsEssentials.png', 'Data Analytics Essentials Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="DataAnalyticsEssentials.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 4 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('DigitalAwareness.png', 'Digital Awareness Certificate')">
+                        <img src="DigitalAwareness.png" alt="Digital Awareness" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Digital Awareness</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('DigitalAwareness.png', 'Digital Awareness Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="DigitalAwareness.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 5 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('DigitalSafetyandSecurityAwareness.png', 'Digital Safety & Security Certificate')">
+                        <img src="DigitalSafetyandSecurityAwareness.png" alt="Digital Safety & Security" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Digital Safety & Security</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('DigitalSafetyandSecurityAwareness.png', 'Digital Safety & Security Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="DigitalSafetyandSecurityAwareness.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 6 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('EthicalHacker.png', 'Ethical Hacker Certificate')">
+                        <img src="EthicalHacker.png" alt="Ethical Hacker" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Ethical Hacker</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('EthicalHacker.png', 'Ethical Hacker Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="EthicalHacker.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 7 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('FindInsightswithAI.png', 'Find Insights with AI Certificate')">
+                        <img src="FindInsightswithAI.png" alt="Find Insights with AI" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Find Insights with AI</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('FindInsightswithAI.png', 'Find Insights with AI Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="FindInsightswithAI.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 8 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('HTMLEssentials.png', 'HTML Essentials Certificate')">
+                        <img src="HTMLEssentials.png" alt="HTML Essentials" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">HTML Essentials</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('HTMLEssentials.png', 'HTML Essentials Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="HTMLEssentials.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 9 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('IntroductiontoCS.png', 'Introduction to CS Certificate')">
+                        <img src="IntroductiontoCS.png" alt="Introduction to CS" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Introduction to CS</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('IntroductiontoCS.png', 'Introduction to CS Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="IntroductiontoCS.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 10 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('IntrotoDataScience.png', 'Intro to Data Science Certificate')">
+                        <img src="IntrotoDataScience.png" alt="Intro to Data Science" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Intro to Data Science</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('IntrotoDataScience.png', 'Intro to Data Science Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="IntrotoDataScience.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 11 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('IntroductiontoIoT.png', 'Introduction to IoT Certificate')">
+                        <img src="IntroductiontoIoT.png" alt="Introduction to IoT" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Introduction to IoT</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('IntroductiontoIoT.png', 'Introduction to IoT Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="IntroductiontoIoT.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 12 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('IntrotoModernAIUpdate.png', 'Intro to Modern AI Update Certificate')">
+                        <img src="IntrotoModernAIUpdate.png" alt="Intro to Modern AI Update" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Intro to Modern AI Update</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('IntrotoModernAIUpdate.png', 'Intro to Modern AI Update Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="IntrotoModernAIUpdate.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 13 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('ITCustomerSupportBasics.png', 'IT Customer Support Basics Certificate')">
+                        <img src="ITCustomerSupportBasics.png" alt="IT Customer Support Basics" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">IT Customer Support Basics</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('ITCustomerSupportBasics.png', 'IT Customer Support Basics Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="ITCustomerSupportBasics.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 14 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('NetworkingBasics.png', 'Networking Basics Certificate')">
+                        <img src="NetworkingBasics.png" alt="Networking Basics" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Networking Basics</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('NetworkingBasics.png', 'Networking Basics Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="NetworkingBasics.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 15 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('NetworkSupportandSecurity.png', 'Network Support and Security Certificate')">
+                        <img src="NetworkSupportandSecurity.png" alt="Network Support & Security" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Network Support & Security</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('NetworkSupportandSecurity.png', 'Network Support and Security Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="NetworkSupportandSecurity.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 16 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('PromptLikeanEngineer.png', 'Prompt Like an Engineer Certificate')">
+                        <img src="PromptLikeanEngineer.png" alt="Prompt Like an Engineer" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Prompt Like an Engineer</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('PromptLikeanEngineer.png', 'Prompt Like an Engineer Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="PromptLikeanEngineer.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 17 -->
+                <div class="glass-card p-4 rounded-3xl flex flex-col justify-between">
+                    <div class="w-full h-48 rounded-2xl overflow-hidden mb-3 border border-brandy/10 cursor-pointer" onclick="openModal('PythonEssentials1.png', 'Python Essentials 1 Certificate')">
+                        <img src="PythonEssentials1.png" alt="Python Essentials 1.1" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-base">Python Essentials 1.1</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openModal('PythonEssentials1.png', 'Python Essentials 1 Certificate')" class="flex-1 bg-flamingo text-brandy text-xs py-2 rounded-xl font-semibold hover:opacity-90 transition">Preview Image</button>
+                            <a href="PythonEssentials1.pdf" target="_blank" class="flex-1 text-center bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs py-2 rounded-xl font-semibold hover:bg-flamingo transition">PDF &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: 4 Attended Seminars with Seminar 1, 2, 3, 4 Labels -->
+        <section id="seminars" class="space-y-12 pt-6 scroll-mt-24 reveal">
+            <h2 class="text-3xl font-bold border-b-2 border-brandy/20 dark:border-vanilla/20 pb-3 font-heading">
+                Attended Webinars & Seminars (4 Total)
+            </h2>
+
+            <!-- Seminar 1 -->
+            <div id="seminar1" class="space-y-6 glass-card p-8 rounded-3xl scroll-mt-28">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-flamingo text-brandy rounded-full text-xs font-bold uppercase tracking-widest mb-2">Seminar 1</span>
+                        <h3 class="text-2xl font-bold font-heading">Database 101: Data Storage, SQL and Query Optimization</h3>
+                        <p class="text-sm italic opacity-80">UpskillTechPH Training Services | Speaker: Alexander Lopez</p>
+                    </div>
+                    <a href="110-LODOR.pdf" target="_blank" class="bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs px-5 py-2.5 rounded-xl hover:bg-flamingo hover:text-brandy transition duration-300">View PDF Cert</a>
+                </div>
+
+                <div class="relative w-full h-80 rounded-2xl overflow-hidden bg-brandy/10 group shadow-inner">
+                    <div class="slide slide-1 active"><img src="seminar1_pic1.jpg" alt="Seminar 1 Pic 1" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-1"><img src="seminar1_pic2.jpg" alt="Seminar 1 Pic 2" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-1"><img src="seminar1_pic3.jpg" alt="Seminar 1 Pic 3" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-1"><img src="seminar1_pic4.jpg" alt="Seminar 1 Pic 4" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-1"><img src="seminar1_pic5.jpg" alt="Seminar 1 Pic 5" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-1"><img src="seminar1_pic6.jpg" alt="Seminar 1 Pic 6" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-1"><img src="seminar1_pic7.jpg" alt="Seminar 1 Pic 7" class="w-full h-full object-cover"></div>
+                    <button onclick="changeSlide('slide-1', -1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-brandy/80 text-vanilla w-10 h-10 rounded-full hover:bg-flamingo hover:text-brandy transition flex items-center justify-center font-bold shadow-md z-10">&larr;</button>
+                    <button onclick="changeSlide('slide-1', 1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-brandy/80 text-vanilla w-10 h-10 rounded-full hover:bg-flamingo hover:text-brandy transition flex items-center justify-center font-bold shadow-md z-10">&rarr;</button>
+                </div>
+            </div>
+
+            <!-- Seminar 2 -->
+            <div id="seminar2" class="space-y-6 glass-card p-8 rounded-3xl scroll-mt-28">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-flamingo text-brandy rounded-full text-xs font-bold uppercase tracking-widest mb-2">Seminar 2</span>
+                        <h3 class="text-2xl font-bold font-heading">Ethics of Using AI in Classroom</h3>
+                        <p class="text-sm italic opacity-80">Future Minds World Innovation Forum (FMWIF) | Presenter: Miss Iqra</p>
+                    </div>
+                    <a href="87 - LODOR.pdf" target="_blank" class="bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs px-5 py-2.5 rounded-xl hover:bg-flamingo hover:text-brandy transition duration-300">View PDF Cert</a>
+                </div>
+
+                <div class="relative w-full h-80 rounded-2xl overflow-hidden bg-brandy/10 group shadow-inner">
+                    <div class="slide slide-2 active"><img src="seminar2_pic1.jpg" alt="Seminar 2 Pic 1" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-2"><img src="seminar2_pic2.jpg" alt="Seminar 2 Pic 2" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-2"><img src="seminar2_pic3.jpg" alt="Seminar 2 Pic 3" class="w-full h-full object-cover"></div>
+                    <button onclick="changeSlide('slide-2', -1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-brandy/80 text-vanilla w-10 h-10 rounded-full hover:bg-flamingo hover:text-brandy transition flex items-center justify-center font-bold shadow-md z-10">&larr;</button>
+                    <button onclick="changeSlide('slide-2', 1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-brandy/80 text-vanilla w-10 h-10 rounded-full hover:bg-flamingo hover:text-brandy transition flex items-center justify-center font-bold shadow-md z-10">&rarr;</button>
+                </div>
+            </div>
+
+            <!-- Seminar 3 -->
+            <div id="seminar3" class="space-y-6 glass-card p-8 rounded-3xl scroll-mt-28">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-flamingo text-brandy rounded-full text-xs font-bold uppercase tracking-widest mb-2">Seminar 3</span>
+                        <h3 class="text-2xl font-bold font-heading">AI-Augmented Assessment, Feedback, and Academic Integrity</h3>
+                        <p class="text-sm italic opacity-80">IBES & LEB | Speakers: Mr. Wong Chun Fan & Dr. Alex L. Soriano</p>
+                    </div>
+                    <a href="88f25ccd-2ba4-47d3-8ec3-950a7ac952e6.jpg" target="_blank" class="bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs px-5 py-2.5 rounded-xl hover:bg-flamingo hover:text-brandy transition duration-300">View Certificate</a>
+                </div>
+
+                <div class="relative w-full h-80 rounded-2xl overflow-hidden bg-brandy/10 group shadow-inner">
+                    <div class="slide slide-3 active"><img src="seminar3_pic1.jpg" alt="Seminar 3 Pic 1" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-3"><img src="seminar3_pic2.jpg" alt="Seminar 3 Pic 2" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-3"><img src="seminar3_pic3.jpg" alt="Seminar 3 Pic 3" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-3"><img src="seminar3_pic4.jpg" alt="Seminar 3 Pic 4" class="w-full h-full object-cover"></div>
+                    <button onclick="changeSlide('slide-3', -1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-brandy/80 text-vanilla w-10 h-10 rounded-full hover:bg-flamingo hover:text-brandy transition flex items-center justify-center font-bold shadow-md z-10">&larr;</button>
+                    <button onclick="changeSlide('slide-3', 1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-brandy/80 text-vanilla w-10 h-10 rounded-full hover:bg-flamingo hover:text-brandy transition flex items-center justify-center font-bold shadow-md z-10">&rarr;</button>
+                </div>
+            </div>
+
+            <!-- Seminar 4 -->
+            <div id="seminar4" class="space-y-6 glass-card p-8 rounded-3xl scroll-mt-28">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-flamingo text-brandy rounded-full text-xs font-bold uppercase tracking-widest mb-2">Seminar 4</span>
+                        <h3 class="text-2xl font-bold font-heading">Harnessing Emerging AI Technologies to Transform Health Research</h3>
+                        <p class="text-sm italic opacity-80">MMHRDC & DLSU | Speaker: Dr. Raul V. Destura</p>
+                    </div>
+                    <a href="87 - LODOR.pdf" target="_blank" class="bg-brandy text-vanilla dark:bg-vanilla dark:text-brandy text-xs px-5 py-2.5 rounded-xl hover:bg-flamingo hover:text-brandy transition duration-300">View PDF Cert</a>
+                </div>
+
+                <div class="relative w-full h-80 rounded-2xl overflow-hidden bg-brandy/10 group shadow-inner">
+                    <div class="slide slide-4 active"><img src="seminar4_pic1.jpg" alt="Seminar 4 Pic 1" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-4"><img src="seminar4_pic2.jpg" alt="Seminar 4 Pic 2" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-4"><img src="seminar4_pic3.jpg" alt="Seminar 4 Pic 3" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-4"><img src="seminar4_pic4.jpg" alt="Seminar 4 Pic 4" class="w-full h-full object-cover"></div>
+                    <div class="slide slide-4"><img src="seminar4_pic5.jpg" alt="Seminar 4 Pic 5" class="w-full h-full object-cover"></div>
+                    <button onclick="changeSlide('slide-4', -1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-brandy/80 text-vanilla w-10 h-10 rounded-full hover:bg-flamingo hover:text-brandy transition flex items-center justify-center font-bold shadow-md z-10">&larr;</button>
+                    <button onclick="changeSlide('slide-4', 1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-brandy/80 text-vanilla w-10 h-10 rounded-full hover:bg-flamingo hover:text-brandy transition flex items-center justify-center font-bold shadow-md z-10">&rarr;</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Pop-up -->
+    <div id="modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 transition-all duration-300">
+        <div class="relative bg-white dark:bg-darkbg p-6 rounded-3xl max-w-3xl w-full text-center space-y-4 shadow-2xl border border-flamingo/30">
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-flamingo text-brandy w-8 h-8 rounded-full font-bold hover:scale-110 transition">✕</button>
+            <h3 id="modal-title" class="text-xl font-bold font-heading">Modal Title</h3>
+            <div class="w-full max-h-[70vh] overflow-hidden rounded-2xl flex items-center justify-center">
+                <img id="modal-img" src="" alt="Preview" class="max-h-[65vh] object-contain rounded-xl">
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" onclick="scrollToTop()" class="fixed bottom-6 right-6 z-40 bg-flamingo text-brandy p-3.5 rounded-2xl shadow-xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 font-bold">
+        ↑ Top
+    </button>
+
+    <footer class="text-center py-8 text-xs opacity-60 border-t border-brandy/10 dark:border-vanilla/10 mt-12">
+        <p>© 2026 Princess B. Lodor. Academic & Credential Portfolio.</p>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        const cursorBall = document.getElementById('cursor-ball');
+        document.addEventListener('mousemove', (e) => {
+            cursorBall.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
+        });
+
+        function revealOnScroll() {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach((element) => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('active');
+                }
+            });
+
+            const backToTopBtn = document.getElementById('backToTop');
+            if (window.scrollY > 400) {
+                backToTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll();
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function filterBadges(category) {
+            const badges = document.querySelectorAll('.badge-card');
+            badges.forEach(badge => {
+                if (category === 'all' || badge.dataset.category === category) {
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            });
+        }
+
+        function openModal(imgSrc, title) {
+            document.getElementById('modal-img').src = imgSrc;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal').classList.remove('hidden');
+        }
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+
+        function changeSlide(slideGroupClass, direction) {
+            const slides = document.querySelectorAll(`.${slideGroupClass}`);
+            let currentIndex = -1;
+            slides.forEach((slide, index) => {
+                if (slide.classList.contains('active')) currentIndex = index;
+            });
+            if (currentIndex !== -1) {
+                slides[currentIndex].classList.remove('active');
+                let newIndex = (currentIndex + direction + slides.length) % slides.length;
+                slides[newIndex].classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
